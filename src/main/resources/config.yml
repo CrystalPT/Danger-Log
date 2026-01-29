@@ -1,0 +1,59 @@
+# DangerLog Configuration
+
+# The radius (in blocks) within which players will trigger the combat timer
+radius: 50
+
+# Whether to allow the ally system (allies don't trigger combat timer for each other)
+allow-allies: true
+
+# Maximum number of allies a player can have (-1 or 0 = infinite)
+max-allies: 6
+
+# What happens when a player combat logs
+# Options: ZOMBIE (spawns a zombie NPC) or INSTANT (instantly kills the player)
+death-type: ZOMBIE
+
+# How long (in seconds) the zombie stays alive before dying automatically
+# -1 = infinite (zombie stays forever until killed or player rejoins)
+# Minimum is 10 seconds (values below 10 are set to 10)
+zombie-log-timer-max: -1
+
+# Combat timer duration in seconds
+timer-duration: 45
+
+# How long ally invites last (in seconds)
+invite-duration: 120
+
+# Whether the plugin is enabled
+enabled: true
+
+# ============================================
+#         COMBAT RESTRICTIONS
+# ============================================
+
+# Disable tridents (Riptide) while in combat (prevents riptide escape)
+disable-tridents: true
+
+# Cooldown for tridents while in combat (in seconds)
+# Only applies if disable-tridents is false
+# Set to 0 to disable cooldown
+trident-cooldown: 10
+
+# Disable elytras while in combat (prevents flying away)
+disable-elytras: true
+
+# Disable ender pearls while in combat
+disable-pearls: false
+
+# Disable firework rockets while in combat (used with elytras)
+disable-fireworks: false
+
+# Cooldown for ender pearls while in combat (in seconds)
+# Only applies if disable-pearls is false
+# Set to 0 to disable cooldown
+pearl-cooldown: 10
+
+# Cooldown for firework rockets while in combat (in seconds)
+# Only applies if disable-fireworks is false
+# Set to 0 to disable cooldown
+firework-cooldown: 10

@@ -1,0 +1,212 @@
+# ⚔️ Danger Log
+
+> **Combat logging protection for Minecraft Paper 1.21+ servers**
+
+---
+
+## 📖 Overview
+
+**Danger Log** is a powerful combat logging protection plugin that prevents players from escaping PvP situations by disconnecting. When a player logs out during combat, a zombie NPC spawns in their place — if the zombie dies, so does the player!
+
+---
+
+## ✨ Features
+
+### 🎯 **Combat Timer System**
+- Players within a configurable radius receive a combat timer in their action bar
+- Timer displays as `20/20` and stays at max while enemies are nearby
+- Timer counts down when players leave combat range
+- Logging out with an active timer = **combat logging**
+
+### 🧟 **Combat Log Protection**
+| Mode | Description |
+|------|-------------|
+| **ZOMBIE** | Spawns a zombie NPC with the player's name. If killed, drops all loot. |
+| **INSTANT** | Immediately kills the player upon combat logging. |
+
+### 🤝 **Ally System**
+- Team up with friends to avoid triggering each other's combat timers
+- Clickable invite system with expiration
+- Configurable max allies per player
+
+### 💾 **Persistence**
+- Zombies survive server restarts
+- Player inventories are safely stored
+- All data saved to files
+
+### 🚫 **Combat Restrictions**
+- **Disable Tridents** (Riptide) while in combat — no flying away!
+- **Disable Elytras** while in combat — stay and fight!
+- **Disable/Cooldown Ender Pearls** — configurable cooldown or full disable
+- **Disable/Cooldown Firework Rockets** — prevent elytra boosting
+
+### 🎮 **Smart Detection**
+- Only affects **Survival** mode players
+- Creative, Spectator, and Adventure players are ignored
+- Bypass permission available for staff
+
+---
+
+## 📋 Commands
+
+### 🔧 Admin Commands
+*Requires `dangerlog.admin` permission (default: OP)*
+
+| Command | Description |
+|:--------|:------------|
+| `/dangerlog on` | Enable the plugin |
+| `/dangerlog off` | Disable the plugin |
+| `/dangerlog reload` | Reload configuration |
+
+### 👥 Ally Commands
+*Available to all players*
+
+| Command | Description |
+|:--------|:------------|
+| `/ally invite <player>` | Send an ally request |
+| `/ally accept [player]` | Accept a pending invite |
+| `/ally remove <player>` | Remove an ally |
+| `/ally list` | View your allies |
+
+---
+
+## 🔑 Permissions
+
+| Permission | Description | Default |
+|:-----------|:------------|:--------|
+| `dangerlog.admin` | Access admin commands | **OP** |
+| `dangerlog.bypass` | Bypass combat log system | **false** |
+
+---
+
+## ⚙️ Configuration
+
+```yaml
+# ===========================================
+#         DANGER LOG CONFIGURATION
+# ===========================================
+
+# Combat detection radius (in blocks)
+radius: 50
+
+# Combat timer duration (seconds)
+timer-duration: 45
+
+# ------ DEATH TYPE ------
+# ZOMBIE = Spawns NPC zombie
+# INSTANT = Kills player immediately
+death-type: ZOMBIE
+
+# ------ ZOMBIE SETTINGS ------
+# How long before zombie auto-expires (-1 or 0 = never)
+# Minimum: 10 seconds
+zombie-log-timer-max: -1
+
+# ------ ALLY SYSTEM ------
+# Enable/disable allies
+allow-allies: true
+
+# Max allies per player (-1 or 0 = unlimited)
+max-allies: 6
+
+# Ally invite duration (seconds)
+invite-duration: 120
+
+# ------ COMBAT RESTRICTIONS ------
+# Disable tridents (Riptide) while in combat
+disable-tridents: true
+
+# Trident cooldown in combat (seconds, 0 = no cooldown)
+# Only applies if disable-tridents is false
+trident-cooldown: 10
+
+# Disable elytras while in combat
+disable-elytras: true
+
+# Disable ender pearls while in combat
+disable-pearls: false
+
+# Disable firework rockets while in combat
+disable-fireworks: false
+
+# Pearl cooldown in combat (seconds, 0 = no cooldown)
+pearl-cooldown: 10
+
+# Firework cooldown in combat (seconds, 0 = no cooldown)
+firework-cooldown: 10
+
+# ------ GENERAL ------
+# Plugin enabled state
+enabled: true
+```
+
+---
+
+## 🎬 How It Works
+
+```
+1️⃣  Two players enter combat range (30 blocks)
+         ↓
+2️⃣  Both see combat timer: [20/20]
+         ↓
+3️⃣  Timer stays at max while in range
+         ↓
+4️⃣  Player leaves range → timer counts down
+         ↓
+5️⃣  Player logs out with active timer
+         ↓
+    ┌─────────────────────────────────────┐
+    │  ⚠️ COMBAT LOG DETECTED!            │
+    │  Zombie spawns at logout location   │
+    │  Chat: "Player has logged out in    │
+    │         combat."                    │
+    └─────────────────────────────────────┘
+         ↓
+6️⃣  If zombie is killed → loot drops
+         ↓
+7️⃣  Player rejoins → DEATH SCREEN
+```
+
+---
+
+## 🧟 Zombie NPC Details
+
+| Property | Value |
+|:---------|:------|
+| **Name** | Player's name (bold red) |
+| **AI** | Disabled |
+| **Burns in Sun** | No |
+| **Health** | Same as player at logout |
+| **Drops** | Player's full inventory |
+| **Despawns** | Never (unless configured) |
+
+---
+
+## 📁 Data Files
+
+| File | Purpose |
+|:-----|:--------|
+| `config.yml` | Plugin configuration |
+| `allies.yml` | Stored ally relationships |
+| `zombies.yml` | Active combat log zombies |
+
+---
+
+## 💡 Tips
+
+- **For SMP servers:** Set `zombie-log-timer-max` to `-1` so zombies stay forever
+- **For minigames:** Use `INSTANT` death-type for immediate punishment
+- **For teams:** Enable allies with a reasonable `max-allies` limit
+- **For staff:** Give `dangerlog.bypass` permission to moderators
+- **Anti-escape:** Keep tridents and elytras disabled to prevent flying away
+- **Pearl cooldown:** Set `pearl-cooldown` to 10+ seconds to limit pearl spam
+
+---
+
+## 📞 Support
+
+Having issues? Contact the developer!
+
+---
+
+**Made with ❤️ by CrystalPT**

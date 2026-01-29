@@ -1,0 +1,24 @@
+name: DangerLog
+version: '1.1'
+main: secret.dangerLog.DangerLog
+api-version: '1.21'
+authors: [ CrystalPT ]
+description: Combat logging protection with ally system
+website: https://codehub.center
+
+commands:
+  dangerlog:
+    description: Admin commands for DangerLog
+    usage: /dangerlog <on|off|reload>
+    permission: dangerlog.admin
+  ally:
+    description: Manage your allies
+    usage: /ally <invite|remove|list|accept> [player]
+
+permissions:
+  dangerlog.admin:
+    description: Allows use of admin commands
+    default: op
+  dangerlog.bypass:
+    description: Bypass the danger log system
+    default: false
