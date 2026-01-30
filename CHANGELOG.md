@@ -1,5 +1,131 @@
 # Changelog
 
+## Version 1.3
+
+### New Features
+
+#### New Combat Restrictions
+New combat restrictions added:
+
+- **Wind Charge Restrictions**
+  - Option to fully disable wind charges during combat
+  - Configurable cooldown for wind charges when not fully disabled
+  - Uses native Minecraft cooldown indicator in hotbar
+
+- **Cobweb Restrictions**
+  - Option to fully disable cobweb placement during combat
+  - Configurable cooldown for cobweb placement when not fully disabled
+  - Uses native Minecraft cooldown indicator in hotbar
+
+- **Container Restrictions**
+  - Option to fully disable opening containers during combat
+  - Includes: chests, ender chests, barrels, hoppers, droppers, dispensers, shulker boxes, trapped chests, furnaces, blast furnaces, smokers, brewing stands
+
+- **Pearl Refresh Combat**
+  - New option to refresh combat timer to max when throwing an ender pearl
+  - Prevents players from pearling away while their timer counts down
+  - Enabled by default
+
+- **Combat Log Zombie Proximity**
+  - Players near combat log zombies now trigger the combat timer
+  - Works just like being near another player
+  - Prevents avoiding combat by logging near a zombie
+  - Enabled by default
+
+- **Update Checker**
+  - Automatically checks Modrinth for new versions on server startup
+  - Notifies opped players or those with `dangerlog.admin` permission on join
+  - Clickable download link in the notification message
+  - Can be disabled in config
+
+- **Zombie Equipment System**
+  - Combat log zombies now visually wear the player's armor
+  - Zombie holds player's main hand and offhand items
+  - Equipment drops naturally when zombie is killed (100% drop chance)
+  - Equipment persists through server restarts
+
+- **Health Synchronization**
+  - Zombie spawns with the exact health the player had when logging out
+  - When player rejoins (zombie alive), player's health syncs to zombie's current health
+  - If zombie was damaged while player was offline, player returns with reduced health
+
+#### Weapon Restrictions (Minecraft 1.21+)
+New combat restrictions for Minecraft 1.21 weapons:
+
+- **Mace Restrictions**
+  - Option to fully disable maces during combat
+  - Configurable cooldown for mace attacks when not fully disabled
+  - Uses native Minecraft cooldown indicator in hotbar
+
+- **Spear Restrictions**
+  - Option to fully disable spears during combat
+  - Option to disable only the spear lunge ability (allows normal damage)
+  - Configurable cooldown for spear attacks
+  - Configurable cooldown for spear lunge ability
+  - Uses native Minecraft cooldown indicator in hotbar
+
+#### ProtocolLib Integration (Optional)
+- ProtocolLib is now a soft dependency for advanced spear detection
+- Spear lunge detection requires ProtocolLib to be installed
+- Plugin functions normally without ProtocolLib (spear lunge features disabled)
+- Warning logged if spear lunge features are enabled but ProtocolLib is missing
+
+### New Config Options
+
+```yaml
+# Check for updates on Modrinth and notify ops on join
+check-updates: true
+
+# Modrinth project slug (change if you fork the plugin)
+modrinth-slug: "dangerlog"
+
+# Disable wind charges while in combat
+disable-wind-charges: false
+
+# Wind charge cooldown in seconds (0 = no cooldown)
+wind-charge-cooldown: 0
+
+# Disable cobweb placement while in combat
+disable-cobwebs: false
+
+# Cobweb cooldown in seconds (0 = no cooldown)
+cobweb-cooldown: 0
+
+# Disable opening containers while in combat
+disable-containers: false
+
+# Refresh combat timer when throwing an ender pearl
+pearl-refresh-combat: true
+
+# Whether being near a combat log zombie triggers combat
+zombie-proximity-combat: true
+
+# Disable spears while in combat
+disable-spears: false
+
+# Disable only the spear lunge ability (requires ProtocolLib)
+disable-spear-lunge: false
+
+# Spear cooldown in seconds (0 = no cooldown)
+spear-cooldown: 0
+
+# Spear lunge cooldown in seconds (requires ProtocolLib)
+spear-lunge-cooldown: 5
+
+# Disable maces while in combat
+disable-maces: false
+
+# Mace cooldown in seconds (0 = no cooldown)
+mace-cooldown: 5
+```
+
+### Technical Changes
+- Added ProtocolLib as soft dependency
+- New packet listeners for spear detection
+- Improved cooldown management for new weapon types
+
+---
+
 ## Version 1.2
 
 ### New Features

@@ -1,5 +1,14 @@
 # DangerLog Configuration
 
+# -------- UPDATE CHECKER --------
+# Check for updates on Modrinth and notify ops on join
+check-updates: true
+
+# Modrinth project slug (change if you fork the plugin)
+modrinth-slug: "dangerlog"
+
+# -------- GENERAL SETTINGS --------
+
 # The radius (in blocks) within which players will trigger the combat timer
 radius: 50
 
@@ -17,6 +26,10 @@ death-type: ZOMBIE
 # -1 = infinite (zombie stays forever until killed or player rejoins)
 # Minimum is 10 seconds (values below 10 are set to 10)
 zombie-log-timer-max: -1
+
+# Whether being near a combat log zombie triggers combat timer
+# If true, players within radius of a combat log zombie will be in "danger"
+zombie-proximity-combat: true
 
 # Combat timer duration in seconds
 timer-duration: 45
@@ -45,15 +58,70 @@ disable-elytras: true
 # Disable ender pearls while in combat
 disable-pearls: false
 
-# Disable firework rockets while in combat (used with elytras)
-disable-fireworks: false
-
 # Cooldown for ender pearls while in combat (in seconds)
 # Only applies if disable-pearls is false
 # Set to 0 to disable cooldown
 pearl-cooldown: 10
 
+# Refresh combat timer to max when throwing an ender pearl
+# Prevents players from pearling away while their timer counts down
+pearl-refresh-combat: true
+
+# Disable firework rockets while in combat (used with elytras)
+disable-fireworks: false
+
 # Cooldown for firework rockets while in combat (in seconds)
 # Only applies if disable-fireworks is false
 # Set to 0 to disable cooldown
 firework-cooldown: 10
+
+# Disable wind charges while in combat
+disable-wind-charges: false
+
+# Cooldown for wind charges while in combat (in seconds)
+# Only applies if disable-wind-charges is false
+# Set to 0 to disable cooldown
+wind-charge-cooldown: 0
+
+# Disable cobweb placement while in combat
+disable-cobwebs: false
+
+# Cooldown for cobweb placement while in combat (in seconds)
+# Only applies if disable-cobwebs is false
+# Set to 0 to disable cooldown
+cobweb-cooldown: 0
+
+# Disable opening containers while in combat
+# Includes: chests, ender chests, barrels, hoppers, droppers, dispensers,
+# shulker boxes, trapped chests, furnaces, blast furnaces, smokers, brewing stands
+disable-containers: false
+
+# ============================================
+#         WEAPON RESTRICTIONS (1.21+)
+# ============================================
+
+# Disable spears while in combat (prevents all spear attacks)
+disable-spears: false
+
+# Disable only the spear lunge ability (allows normal damage)
+# Requires ProtocolLib to be installed
+disable-spear-lunge: false
+
+# Cooldown for spear attacks while in combat (in seconds)
+# Only applies if disable-spears is false
+# Set to 0 to disable cooldown
+spear-cooldown: 0
+
+# Cooldown for spear lunge ability while in combat (in seconds)
+# Requires ProtocolLib to be installed
+# Only applies if disable-spear-lunge is false
+# Set to 0 to disable cooldown
+spear-lunge-cooldown: 5
+
+# Disable maces while in combat (prevents all mace attacks)
+disable-maces: false
+
+# Cooldown for mace attacks while in combat (in seconds)
+# Only applies if disable-maces is false
+# Set to 0 to disable cooldown
+mace-cooldown: 5

@@ -13,6 +13,7 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -139,7 +140,28 @@ public class CombatManager {
                 zombie.customName(customName);
                 zombie.setCustomNameVisible(true);
                 
-                zombie.getEquipment().clear();
+                String equipmentData = zombieData.getString(path + ".equipment");
+                if (equipmentData != null) {
+                    ItemStack[] equipmentItems = deserializeInventory(equipmentData);
+                    EntityEquipment equipment = zombie.getEquipment();
+                    if (equipmentItems != null && equipment != null) {
+                        if (equipmentItems.length > 0) equipment.setHelmet(equipmentItems[0]);
+                        if (equipmentItems.length > 1) equipment.setChestplate(equipmentItems[1]);
+                        if (equipmentItems.length > 2) equipment.setLeggings(equipmentItems[2]);
+                        if (equipmentItems.length > 3) equipment.setBoots(equipmentItems[3]);
+                        if (equipmentItems.length > 4) equipment.setItemInOffHand(equipmentItems[4]);
+                        if (equipmentItems.length > 5) equipment.setItemInMainHand(equipmentItems[5]);
+                        
+                        equipment.setHelmetDropChance(1.0f);
+                        equipment.setChestplateDropChance(1.0f);
+                        equipment.setLeggingsDropChance(1.0f);
+                        equipment.setBootsDropChance(1.0f);
+                        equipment.setItemInOffHandDropChance(1.0f);
+                        equipment.setItemInMainHandDropChance(1.0f);
+                    }
+                } else {
+                    zombie.getEquipment().clear();
+                }
                 
                 combatLogZombies.put(playerUUID, zombie);
                 zombieKilled.put(playerUUID, false);
@@ -185,6 +207,19 @@ public class CombatManager {
             ItemStack[] inventory = savedInventories.get(playerUUID);
             if (inventory != null) {
                 zombieData.set(path + ".inventory", serializeInventory(inventory));
+            }
+            
+            EntityEquipment equipment = zombie.getEquipment();
+            if (equipment != null) {
+                ItemStack[] equipmentItems = new ItemStack[] {
+                    equipment.getHelmet(),
+                    equipment.getChestplate(),
+                    equipment.getLeggings(),
+                    equipment.getBoots(),
+                    equipment.getItemInOffHand(),
+                    equipment.getItemInMainHand()
+                };
+                zombieData.set(path + ".equipment", serializeInventory(equipmentItems));
             }
         }
         
@@ -261,6 +296,8 @@ public class CombatManager {
                 int timerDuration = plugin.getConfigManager().getTimerDuration();
                 boolean allowAllies = plugin.getConfigManager().isAllowAllies();
                 
+                boolean zombieProximityCombat = plugin.getConfigManager().isZombieProximityCombat();
+                
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     if (player.isPermissionSet("dangerlog.bypass") && player.hasPermission("dangerlog.bypass")) continue;
                     if (player.getGameMode() != GameMode.SURVIVAL) continue;
@@ -281,6 +318,22 @@ public class CombatManager {
                         if (distance <= radius) {
                             nearEnemy = true;
                             break;
+                        }
+                    }
+                    
+                    if (!nearEnemy && zombieProximityCombat) {
+                        for (Map.Entry<UUID, Zombie> entry : combatLogZombies.entrySet()) {
+                            if (entry.getKey().equals(player.getUniqueId())) continue;
+                            
+                            Zombie zombie = entry.getValue();
+                            if (zombie == null || zombie.isDead()) continue;
+                            if (!player.getWorld().equals(zombie.getWorld())) continue;
+                            
+                            double distance = player.getLocation().distance(zombie.getLocation());
+                            if (distance <= radius) {
+                                nearEnemy = true;
+                                break;
+                            }
                         }
                     }
                     
@@ -360,6 +413,12 @@ public class CombatManager {
         return combatTimers.containsKey(playerUUID) && combatTimers.get(playerUUID) > 0;
     }
     
+    public void refreshCombatTimer(UUID playerUUID) {
+        if (isInCombat(playerUUID)) {
+            combatTimers.put(playerUUID, plugin.getConfigManager().getTimerDuration());
+        }
+    }
+    
     public void handleCombatLog(Player player) {
         String deathType = plugin.getConfigManager().getDeathType();
         
@@ -377,7 +436,19 @@ public class CombatManager {
         UUID playerUUID = player.getUniqueId();
         Location loc = player.getLocation();
         
-        savedInventories.put(playerUUID, player.getInventory().getContents().clone());
+        ItemStack[] armorContents = player.getInventory().getArmorContents();
+        ItemStack offhandItem = player.getInventory().getItemInOffHand();
+        ItemStack mainHandItem = player.getInventory().getItemInMainHand();
+        int heldSlot = player.getInventory().getHeldItemSlot();
+        
+        ItemStack[] inventoryContents = player.getInventory().getContents().clone();
+        for (int i = 36; i <= 40; i++) {
+            if (i < inventoryContents.length) {
+                inventoryContents[i] = null;
+            }
+        }
+        inventoryContents[heldSlot] = null;
+        savedInventories.put(playerUUID, inventoryContents);
         
         Zombie zombie = (Zombie) loc.getWorld().spawnEntity(loc, EntityType.ZOMBIE);
         
@@ -395,7 +466,20 @@ public class CombatManager {
         zombie.customName(customName);
         zombie.setCustomNameVisible(true);
         
-        zombie.getEquipment().clear();
+        EntityEquipment equipment = zombie.getEquipment();
+        equipment.setHelmet(armorContents[3]);
+        equipment.setChestplate(armorContents[2]);
+        equipment.setLeggings(armorContents[1]);
+        equipment.setBoots(armorContents[0]);
+        equipment.setItemInOffHand(offhandItem);
+        equipment.setItemInMainHand(mainHandItem);
+        
+        equipment.setHelmetDropChance(1.0f);
+        equipment.setChestplateDropChance(1.0f);
+        equipment.setLeggingsDropChance(1.0f);
+        equipment.setBootsDropChance(1.0f);
+        equipment.setItemInOffHandDropChance(1.0f);
+        equipment.setItemInMainHandDropChance(1.0f);
         
         combatLogZombies.put(playerUUID, zombie);
         zombieKilled.put(playerUUID, false);
@@ -445,6 +529,7 @@ public class CombatManager {
         String playerName = Bukkit.getOfflinePlayer(playerUUID).getName();
         Location zombieLocation = zombie.getLocation();
         
+        dropZombieEquipment(zombie, zombieLocation);
         zombie.remove();
         
         dropPlayerLoot(playerUUID, zombieLocation);
@@ -516,6 +601,26 @@ public class CombatManager {
         }
     }
     
+    private void dropZombieEquipment(Zombie zombie, Location location) {
+        EntityEquipment equipment = zombie.getEquipment();
+        if (equipment == null) return;
+        
+        ItemStack[] items = {
+            equipment.getHelmet(),
+            equipment.getChestplate(),
+            equipment.getLeggings(),
+            equipment.getBoots(),
+            equipment.getItemInMainHand(),
+            equipment.getItemInOffHand()
+        };
+        
+        for (ItemStack item : items) {
+            if (item != null && !item.getType().isAir()) {
+                location.getWorld().dropItemNaturally(location, item);
+            }
+        }
+    }
+    
     public void handlePlayerRejoin(Player player) {
         UUID playerUUID = player.getUniqueId();
         
@@ -528,19 +633,30 @@ public class CombatManager {
                 player.getInventory().setContents(inventory);
             }
             
+            EntityEquipment equipment = zombie.getEquipment();
+            if (equipment != null) {
+                player.getInventory().setHelmet(equipment.getHelmet());
+                player.getInventory().setChestplate(equipment.getChestplate());
+                player.getInventory().setLeggings(equipment.getLeggings());
+                player.getInventory().setBoots(equipment.getBoots());
+                player.getInventory().setItemInOffHand(equipment.getItemInOffHand());
+                player.getInventory().setItemInMainHand(equipment.getItemInMainHand());
+            }
+            
+            double zombieHealth = zombie.getHealth();
+            double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getValue();
+            player.setHealth(Math.min(zombieHealth, maxHealth));
+            
             zombie.remove();
             combatLogZombies.remove(playerUUID);
             zombieKilled.remove(playerUUID);
             zombieKillers.remove(playerUUID);
             zombieSpawnTimes.remove(playerUUID);
             
-            // Notify player their zombie was removed
-            player.sendMessage(Component.text("You have rejoined. Your combat log zombie has been removed.", NamedTextColor.GREEN));
-            
             saveZombieData();
         } else if (zombieKilled.getOrDefault(playerUUID, false)) {
             // Notify player their zombie was killed
-            player.sendMessage(Component.text("Your combat log zombie was killed while you were offline!", NamedTextColor.RED));
+            player.sendMessage(Component.text("You were killed while you were offline!", NamedTextColor.RED));
             
             suppressDeathMessage.add(playerUUID);
             

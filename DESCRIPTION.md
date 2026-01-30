@@ -86,6 +86,14 @@
 #         DANGER LOG CONFIGURATION
 # ===========================================
 
+# ------ UPDATE CHECKER ------
+# Check Modrinth for updates and notify ops on join
+check-updates: true
+
+# Modrinth project slug (change if you fork the plugin)
+modrinth-slug: "dangerlog"
+
+# ------ GENERAL SETTINGS ------
 # Combat detection radius (in blocks)
 radius: 50
 
@@ -101,6 +109,9 @@ death-type: ZOMBIE
 # How long before zombie auto-expires (-1 or 0 = never)
 # Minimum: 10 seconds
 zombie-log-timer-max: -1
+
+# Being near a combat log zombie triggers combat timer
+zombie-proximity-combat: true
 
 # ------ ALLY SYSTEM ------
 # Enable/disable allies
@@ -132,8 +143,46 @@ disable-fireworks: false
 # Pearl cooldown in combat (seconds, 0 = no cooldown)
 pearl-cooldown: 10
 
+# Refresh combat timer when throwing a pearl
+pearl-refresh-combat: true
+
 # Firework cooldown in combat (seconds, 0 = no cooldown)
 firework-cooldown: 10
+
+# Disable wind charges while in combat
+disable-wind-charges: false
+
+# Wind charge cooldown in combat (seconds, 0 = no cooldown)
+wind-charge-cooldown: 0
+
+# Disable cobweb placement while in combat
+disable-cobwebs: false
+
+# Cobweb cooldown in combat (seconds, 0 = no cooldown)
+cobweb-cooldown: 0
+
+# Disable opening containers while in combat
+# Includes: chests, ender chests, barrels, hoppers, shulker boxes, etc.
+disable-containers: false
+
+# ------ WEAPON RESTRICTIONS (1.21+) ------
+# Disable spears while in combat
+disable-spears: false
+
+# Disable only spear lunge (requires ProtocolLib)
+disable-spear-lunge: true
+
+# Spear cooldown in combat (seconds, 0 = no cooldown)
+spear-cooldown: 0
+
+# Spear lunge cooldown (requires ProtocolLib)
+spear-lunge-cooldown: 5
+
+# Disable maces while in combat
+disable-maces: false
+
+# Mace cooldown in combat (seconds, 0 = no cooldown)
+mace-cooldown: 5
 
 # ------ GENERAL ------
 # Plugin enabled state
@@ -176,9 +225,15 @@ enabled: true
 | **Name** | Player's name (bold red) |
 | **AI** | Disabled |
 | **Burns in Sun** | No |
-| **Health** | Same as player at logout |
-| **Drops** | Player's full inventory |
+| **Health** | Synced with player (both ways) |
+| **Equipment** | Wears player's armor, holds items |
+| **Drops** | Equipped items + inventory on death |
 | **Despawns** | Never (unless configured) |
+
+### Health Synchronization
+- Zombie spawns with the exact health the player had
+- If player rejoins while zombie is alive, player's health matches zombie's current health
+- Damage dealt to the zombie while offline affects the player when they return
 
 ---
 
